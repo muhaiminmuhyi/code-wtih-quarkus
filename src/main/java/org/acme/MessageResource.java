@@ -1,20 +1,35 @@
 package org.acme;
 
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/message")
 public class MessageResource {
+    List<String> msg = new ArrayList<>();
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String message() {return "Halloooo gaissss";}
+    public List<String> getMsg(){
+        return msg;
+    }
 
     @GET
-    @Path("/admin_message")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String adm_message() {return "Halloooo ini pesan dari admin";}
+    @Path("{index}")
+    public String getMsgById(Integer index) {
+        return msg.get(index);
+    }
+
+    @POST
+    public List<String> addMsg(String message){
+        msg.add(message);
+        return msg;
+    }
+
+    @PUT
+    @Path("{index}")
+    public List<String> changeWord(Integer index, String message){
+        msg.set(index, message);
+        return msg;
+    }
 }
