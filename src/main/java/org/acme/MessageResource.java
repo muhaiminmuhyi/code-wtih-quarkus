@@ -1,42 +1,54 @@
 package org.acme;
 
 
-import javax.print.attribute.standard.Media;
+import org.acme.model.Message;
+
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.security.PublicKey;
+import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Path("/message")
 public class MessageResource {
-    List<ModelMessage> msg = new ArrayList<>();
+    List<Message> msg = new ArrayList<>();
+
+    @Inject
+    Validator validator;
 
     @GET
-    public List<ModelMessage> getMsg(){
+    public List<Message> getMsg(){
         return msg;
     }
 
     @GET
     @Path("{angka}")
-    public ModelMessage getMsgById(@PathParam("angka") Integer index) {
+    public Message getMsgById(@PathParam("angka") Integer index) {
         return msg.get(index);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ModelMessage addMsg(ModelMessage message){
-        msg.add(message);
-        return message;
+    public Result addMsg(Message message){
+        Set<ConstraintViolation<Message>> violations = validator.validate(message);
+        if (violations.isEmpty()){
+            msg.add(message);
+            return new Result("Pesan berhasil terkirim");
+        } else {
+            return new Result(violations);
+        }
     }
 
     @POST
     @Path("batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ModelMessage> addMsg(List<ModelMessage> lotOfMessage){
-        for (ModelMessage Message : lotOfMessage) {
+    public List<Message> addMsg(List<Message> lotOfMessage){
+        for (org.acme.model.Message Message : lotOfMessage) {
             msg.add(Message);
         }
         return lotOfMessage;
@@ -46,7 +58,7 @@ public class MessageResource {
     @Path("{index}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public ModelMessage editMsg(@PathParam("index") Integer index, ModelMessage newMessage){
+    public Message editMsg(@PathParam("index") Integer index, Message newMessage){
         msg.set(index, newMessage);
         return newMessage;
     }
