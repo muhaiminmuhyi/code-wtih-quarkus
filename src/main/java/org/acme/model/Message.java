@@ -1,20 +1,21 @@
 package org.acme.model;
 
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.util.Date;
 
+//@Entity
 public class Message {
-    @NotBlank
-    public String name;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long id;
+
+    public Integer id_user;
     public Integer number;
-    public String message;
-
-    public Message(){
-
-    }
-
-    public Message(String name, Integer number, String message){
-        this.name = name;
-        this.number = number;
-        this.message = message;
-    }
+    public Integer is_active;
+    public String chat;
+    public Date send_at;
 }
